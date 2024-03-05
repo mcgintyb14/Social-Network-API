@@ -8,7 +8,7 @@ const thoughtSchema = new Schema({
         type: String,
         required: 'You need to leave a thought to submit!',
         minLength: 1,
-        maxLenght: 280
+        maxLength: 280
     },
     createdAt: {
         type: Date,
@@ -18,16 +18,14 @@ const thoughtSchema = new Schema({
     username: {
         type: String,
         required: true
-
     },
-    reactions: [reactionSchema]
-},
-{
-toJSON: {
-    getters: true
-},
-id: false
-})
+    reactions: [{ type: Schema.Types.ObjectId, ref: 'Reaction' }] // Use the reactionSchema for the reactions field
+}, {
+    toJSON: {
+        getters: true
+    },
+    id: false
+});
 
 thoughtSchema.virtual('reactionCount').get(function() {
     return this.reactions.length;

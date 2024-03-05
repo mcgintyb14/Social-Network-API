@@ -1,4 +1,4 @@
-const { Schema, Types } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 const dateFormat = require('../utils/dateHelper');
 
 const reactionSchema = new Schema( 
@@ -16,10 +16,14 @@ const reactionSchema = new Schema(
             type: String,
             required: true
         },
+        thoughtId: {
+            type: Schema.Types.ObjectId,
+            required: true
+        },
         createdAt: {
             type: Date,
             default: Date.now,
-            get: Timestamp => dateFormat(timestamp)
+            get: timestamp => dateFormat(timestamp)
         }
     },
     {
@@ -27,9 +31,9 @@ const reactionSchema = new Schema(
             getters: true
         },
         id: false
-
     }
 );
 
-module.exports = reactionSchema
+const Reaction = model('Reaction', reactionSchema);
 
+module.exports = Reaction;

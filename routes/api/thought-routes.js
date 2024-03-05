@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Thoughts, User } = require('../../models');
+const Reaction = require('../../models/Reaction');
 
 // api/users
 router.get('/', async (req, res) => {
@@ -54,11 +55,14 @@ router.post('/:thoughtId/reactions', async (req, res) => {
         }
 
         // Create the new reaction associated with the thought
-        const newReaction = await Reactions.create({
+        const newReaction = new Reaction({
             reactionBody,
             username,
             thoughtId
         });
+
+        // Save the new reaction to the database
+        await newReaction.save();
 
         // Add the reaction to the thought's reactions array
         thought.reactions.push(newReaction);
