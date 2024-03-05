@@ -4,7 +4,7 @@ const { User } = require('../../models');
 // api/users
 router.get('/', async (req, res) => {
     try {
-        const users = await User.find({});
+        const users = await User.find({}).populate('thoughts'); // Populate the 'thoughts' field
         res.json(users);
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -29,7 +29,8 @@ router.delete('/:id', async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({ error: 'User not found' });
         }
-        res.status(200).json({ message: 'User deleted successfully', deletedUser });
+        await Thoughts.deleteMany({ _id: { $in: deletedUser.thoughts }});
+        res.status(200).json({ message: 'User and associated thoughts have been deleted successfully', deletedUser });
     } catch (err) {
         console.error('Error deleting user:', err);
         res.status(500).json({ error: 'Error deleting user' });
