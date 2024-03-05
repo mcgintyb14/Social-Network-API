@@ -31,6 +31,17 @@ thoughtSchema.virtual('reactionCount').get(function() {
     return this.reactions.length;
 })
 
+// The below code ensures that any reactions associated with a thought are also deleted when that thought gets deleted
+thoughtSchema.pre('remove', async function(next) {
+    try {
+        // Access the Reaction model to delete reactions
+        await this.model('Reaction').deleteMany({ _id: { $in: this.reactions } });
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 const Thought = model("Thoughts", thoughtSchema);
 
 module.exports = Thought;

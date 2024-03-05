@@ -13,6 +13,20 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Route to get all reactions tagged to a specifc thoughtID
+router.get('/:thoughtId/reactions', async (req, res) => {
+    try {
+        const { thoughtId } = req.params;
+        const thought = await Thoughts.findById(thoughtId).populate('reactions');
+        if (!thought) {
+            return res.status(404).json({ error: 'Thought not found' });
+        }
+        res.status(200).json(thought.reactions);
+    } catch (err) {
+        console.error('Error fetching reactions:', err);
+        res.status(500).json({ error: 'Error fetching reactions' });
+    }
+});
 
 router.post('/:userId', async (req, res) => {
     try {
@@ -88,6 +102,21 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// Route to delete all reactions associated with a specific thought ID
+router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
+    try {
+        const { thoughtId, reactionId } = req.params;
+        // Delete the reaction from the thought's reactions array
+        await Thoughts.findByIdAndUpdate(thoughtId, { $pull: { reactions: reactionId } });
+        // Delete the reaction document itself
+        await Reaction.findByIdAndDelete(reactionId);
+        res.status(200).json({ message: 'Reaction deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting reaction:', err);
+        res.status(500).json({ error: 'Error deleting reaction' });
+    }
+});
+
 // The below is the put route to update a specifc user by the ID in the URL; and updating it with the information passed in the body of the request. The response should also display the new, updated value
 router.put('/:id', async (req, res) => {
     try {
@@ -102,5 +131,19 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// This route is to update a specific reaction by targeting the reaction ID
+router.put('/:thoughtId/reactions/:reactionId', async (req, res) => {
+    try {
+        const { thoughtId, reactionId } = req.params;
+        const updatedReaction = await Reaction.findByIdAndUpdate(reactionId, req.body, { new: true });
+        if (!updatedReaction) {
+            return res.status(404).json({ error: 'Reaction not found' });
+        }
+        res.status(200).json({ message: 'Reaction updated successfully', updatedReaction });
+    } catch (err) {
+        console.error('Error updating reaction:', err);
+        res.status(500).json({ error: 'Error updating reaction' });
+    }
+});
 
 module.exports = router;

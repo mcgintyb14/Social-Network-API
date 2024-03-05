@@ -3,8 +3,15 @@ const { User } = require('../../models');
 
 // api/users
 router.get('/', async (req, res) => {
+    // The below ensures that when we GET all users, it will also display all the users' thoughts as well as the reactions to those thoughts
     try {
-        const users = await User.find({}).populate('thoughts'); // Populate the 'thoughts' field
+        const users = await User.find({}).populate({
+            path: 'thoughts',
+            populate: {
+                path: 'reactions',
+                model: 'Reaction' // Specify the model for reactions
+            }
+        });
         res.json(users);
     } catch (err) {
         console.error('Error fetching data:', err);
