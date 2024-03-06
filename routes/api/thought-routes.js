@@ -2,11 +2,21 @@ const router = require('express').Router();
 const { Thoughts, User } = require('../../models');
 const Reaction = require('../../models/Reaction');
 
-// api/users
+
 router.get('/', async (req, res) => {
     try {
         const users = await Thoughts.find({});
         res.json(users);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Error fetching data' });
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await Thoughts.findById(req.params.id);
+        res.json(user);
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Error fetching data' });
@@ -93,12 +103,12 @@ router.delete('/:id', async (req, res) => {
     try {
         const deletedUser = await Thoughts.findByIdAndDelete(req.params.id);
         if (!deletedUser) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ error: 'Thought not found' });
         }
-        res.status(200).json({ message: 'User deleted successfully', deletedUser });
+        res.status(200).json({ message: 'Thought deleted successfully', deletedUser });
     } catch (err) {
-        console.error('Error deleting user:', err);
-        res.status(500).json({ error: 'Error deleting user' });
+        console.error('Error deleting thought:', err);
+        res.status(500).json({ error: 'Error deleting Thought' });
     }
 });
 

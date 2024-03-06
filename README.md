@@ -28,7 +28,7 @@ To use this applicaiton (after following installation instructions above), follo
 5. Open up your Insomnia app (or Postman), and begin using any CRUD operations specified by the routes
 
 Alternatively, see a walkthrough below: <br>
-<a href="" target="_blank" rel="noopener noreferrer">Walkthrough Video</a>
+<a href="https://drive.google.com/file/d/12mZ4WoFozVwgHjSvSHbKEmi63o1U_Tbk/view?usp=drive_link" target="_blank" rel="noopener noreferrer">Walkthrough Video</a>
 
 ## Credits
 N/A

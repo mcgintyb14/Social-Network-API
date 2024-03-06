@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User } = require('../../models');
+const { User, Thoughts } = require('../../models');
 
 // api/users
 router.get('/', async (req, res) => {
@@ -16,6 +16,26 @@ router.get('/', async (req, res) => {
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Error fetching data' });
+    }
+});
+
+// Fetch a specific user by their user ID
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).populate({
+            path: 'thoughts',
+            populate: {
+                path: 'reactions',
+                model: 'Reaction' // Specify the model for reactions
+            }
+        });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (err) {
+        console.error('Error fetching user by ID:', err);
+        res.status(500).json({ error: 'Error fetching user' });
     }
 });
 
